@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBS | Brand Narrative & Community Engagement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        body { -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #FFB347, #FF8C00, #CC5500); }
+        .dark ::-webkit-scrollbar-track { background: #1a1a1a; }
+        .gradient-bg { background: linear-gradient(135deg, #FFB347 0%, #FF8C00 50%, #CC5500 100%); }
+        .gradient-text { background: linear-gradient(90deg, #FFB347, #FF8C00, #CC5500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-gradient { background: linear-gradient(90deg, #FF8C00 0%, #CC5500 100%); }
+        .sidebar-btn.active { border-left: 2px solid #FF8C00; background: rgba(255, 140, 0, 0.08); }
+        .logo-bubble { background: white; border: 1.5px solid #CC5500; box-shadow: inset 0 1px 3px rgba(255,255,255,0.8), 0 1px 3px rgba(0,0,0,0.1); }
+        .metric-card { transition: all 0.3s ease; }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 140, 0, 0.15); }
+        .alert-critical { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .calendar-event { border-left: 3px solid; }
+        .sentiment-positive { color: #10B981; }
+        .sentiment-negative { color: #EF4444; }
+        .sentiment-neutral { color: #6B7280; }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'ebs-orange-light': '#FFB347',
+                        'ebs-orange': '#FF8C00',
+                        'ebs-orange-dark': '#CC5500',
+                        'ebs-white': '#FFFFFF',
+                        'ebs-charcoal': '#1a1a1a'
+                    },
+                    fontSize: {
+                        '2xs': '0.65rem',
+                        '3xs': '0.55rem',
+                        '4xs': '0.45rem'
+                    },
+                    spacing: {
+                        '18': '4.5rem',
+                        '88': '22rem'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden h-screen">
+    <!-- Fixed Header -->
+    <header class="fixed top-0 left-0 right-0 h-10 header-gradient text-white flex items-center justify-between px-3 z-30">
+        <div class="flex items-center space-x-2">
+            <!-- EBS Logo Bubble -->
+            <div class="logo-bubble w-7 h-7 rounded-full flex items-center justify-center">
+                <span class="text-ebs-orange-dark font-bold text-xs">EBS</span>
+            </div>
+            <div>
+                <span class="text-xs font-semibold tracking-tight">Brand Narrative & Community Engagement</span>
+                <div class="text-3xs text-white/70">Quarter 1 Enhanced Dashboard</div>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3">
+            <div id="liveTime" class="text-3xs bg-white/10 px-2 py-0.5 rounded">Loading...</div>
+            <button id="themeToggle" class="text-white/80 hover:text-white transition">
+                <i class="fas fa-moon text-xs"></i>
+            </button>
+            <div class="text-2xs text-white/60">v2.0</div>
+        </div>
+    </header>
+
+    <!-- Fixed Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 h-8 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between px-3 z-30">
+        <div class="flex items-center space-x-2">
+            <div class="gradient-bg w-5 h-5 rounded-full flex items-center justify-center">
+                <span class="text-white text-2xs font-bold">SM</span>
+            </div>
+            <span class="text-2xs font-medium">EBS Social Media Manager</span>
+            <div class="text-3xs px-1.5 py-0.5 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded">Live Analytics Active</div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <div id="dataSync" class="text-2xs text-gray-400 flex items-center">
+                <i class="fas fa-sync-alt mr-1 animate-spin"></i> Syncing...
+            </div>
+            <div class="text-2xs text-ebs-orange">
+                <span id="totalEngagement">5,842</span> Engagements Today
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main Container -->
+    <div class="flex pt-10 pb-8 h-full">
+        <!-- Enhanced Sidebar -->
+        <aside class="w-12 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col items-center py-2 space-y-2">
+            <button data-phase="overview" class="sidebar-btn active w-9 h-9 flex items-center justify-center rounded">
+                <i class="fas fa-home text-xs text-ebs-orange"></i>
+            </button>
+            <button data-phase="analytics" class="sidebar-btn w-9 h-9 flex items-center justify-center rounded">
+                <i class="fas fa-chart-bar text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <button data-phase="calendar" class="sidebar-btn w-9 h-9 flex items-center justify-center rounded">
+                <i class="fas fa-calendar-alt text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <button data-phase="alerts" class="sidebar-btn w-9 h-9 flex items-center justify-center rounded">
+                <i class="fas fa-bell text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <div class="border-t border-gray-300 dark:border-gray-700 my-2 w-6"></div>
+            <button data-phase="phase1" class="sidebar-btn w-9 h-9 flex items-center justify-center rounded">
+                <i class="fas fa-play-circle text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <button data-phase="phase2" class="sidebar-btn w-9 h-9 flex items-center justify-center rounded">
+                <i class="fas fa-hashtag text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <button data-phase="phase3" class="sidebar-btn w-9 h-9 flex items-center justify-center rounded">
+                <i class="fas fa-shield-alt text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <div class="flex-1"></div>
+            <button id="printBtn" class="sidebar-btn w-9 h-9 flex items-center justify-center rounded">
+                <i class="fas fa-print text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <button id="settingsBtn" class="sidebar-btn w-9 h-9 flex items-center justify-center rounded">
+                <i class="fas fa-cog text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-4">
+            <!-- Overview -->
+            <section id="overview" class="phase-content active">
+                <div class="mb-5">
+                    <h1 class="text-lg font-bold gradient-text mb-1">EBS Brand Narrative & Community Engagement</h1>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Quarter 1 Enhanced Dashboard with Real-time Analytics</p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                    <div class="metric-card bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xs text-gray-500">#MyEBSStory</p>
+                                <p class="text-xl font-bold" id="hashtagCount">4,237</p>
+                            </div>
+                            <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center">
+                                <i class="fas fa-hashtag text-white text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="flex items-center text-2xs">
+                                <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+                                <span class="text-green-500">+12%</span>
+                                <span class="text-gray-400 ml-2">from yesterday</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xs text-gray-500">Sentiment Score</p>
+                                <p class="text-xl font-bold sentiment-positive" id="sentimentScore">86%</p>
+                            </div>
+                            <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-smile text-green-600 dark:text-green-300 text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="flex items-center text-2xs">
+                                <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+                                <span class="text-green-500">+8%</span>
+                                <span class="text-gray-400 ml-2">since campaign</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xs text-gray-500">Active Alerts</p>
+                                <p class="text-xl font-bold" id="activeAlerts">2</p>
+                            </div>
+                            <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-yellow-600 dark:text-yellow-300 text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="flex items-center text-2xs">
+                                <span class="text-gray-400">2 require attention</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xs text-gray-500">Scheduled Posts</p>
+                                <p class="text-xl font-bold" id="scheduledPosts">14</p>
+                            </div>
+                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-calendar text-blue-600 dark:text-blue-300 text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="flex items-center text-2xs">
+                                <span class="text-gray-400">Next: Today, 3:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Strategy Overview -->
+                    <div class="col-span-2">
+                        <h2 class="text-sm font-bold mb-3 flex items-center">
+                            <i class="fas fa-road mr-2 text-ebs-orange-dark"></i>
+                            Campaign Strategy Overview
+                        </h2>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                            <div class="space-y-3">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center mr-3">
+                                        <i class="fas fa-play text-white text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs font-bold mb-1">Phase 1: Foundation Video</h3>
+                                        <p class="text-2xs text-gray-600 dark:text-gray-400">"This Is Our Story" - 90-second direct-to-camera reaffirmation</p>
+                                        <div class="flex items-center mt-1">
+                                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                                <div class="gradient-bg h-1.5 rounded-full" style="width: 100%"></div>
+                                            </div>
+                                            <span class="text-3xs ml-2">Completed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center mr-3">
+                                        <i class="fas fa-hashtag text-white text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs font-bold mb-1">Phase 2: #MyEBSStory Campaign</h3>
+                                        <p class="text-2xs text-gray-600 dark:text-gray-400">User-generated content flood to counter negativity</p>
+                                        <div class="flex items-center mt-1">
+                                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                                <div class="gradient-bg h-1.5 rounded-full" style="width: 65%"></div>
+                                            </div>
+                                            <span class="text-3xs ml-2">65% Complete</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center mr-3">
+                                        <i class="fas fa-shield-alt text-gray-500 dark:text-gray-400 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs font-bold mb-1">Phase 3: Sustained Defense</h3>
+                                        <p class="text-2xs text-gray-600 dark:text-gray-400">Pillar content series & community management</p>
+                                        <div class="flex items-center mt-1">
+                                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                                <div class="gradient-bg h-1.5 rounded-full" style="width: 20%"></div>
+                                            </div>
+                                            <span class="text-3xs ml-2">Starting Soon</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div>
+                        <h2 class="text-sm font-bold mb-3 flex items-center">
+                            <i class="fas fa-history mr-2 text-ebs-orange"></i>
+                            Recent Activity
+                        </h2>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                            <div class="space-y-2 max-h-60 overflow-y-auto">
+                                <div class="flex items-start text-2xs">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-2 mt-0.5">
+                                        <i class="fas fa-plus text-green-600 dark:text-green-300 text-3xs"></i>
+                                    </div>
+                                    <div>
+                                        <p><span class="font-medium">#MyEBSStory</span> video from @user_ethio just published</p>
+                                        <p class="text-gray-400">2 minutes ago</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start text-2xs">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-2 mt-0.5">
+                                        <i class="fas fa-calendar text-blue-600 dark:text-blue-300 text-3xs"></i>
+                                    </div>
+                                    <div>
+                                        <p><span class="font-medium">"Behind the Laughter"</span> scheduled for tomorrow</p>
+                                        <p class="text-gray-400">1 hour ago</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start text-2xs">
+                                    <div class="w-6 h-6 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center mr-2 mt-0.5">
+                                        <i class="fas fa-exclamation text-yellow-600 dark:text-yellow-300 text-3xs"></i>
+                                    </div>
+                                    <div>
+                                        <p><span class="font-medium">Sentiment alert:</span> Negative spike detected in comments</p>
+                                        <p class="text-gray-400">3 hours ago</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start text-2xs">
+                                    <div class="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mr-2 mt-0.5">
+                                        <i class="fas fa-chart-line text-purple-600 dark:text-purple-300 text-3xs"></i>
+                                    </div>
+                                    <div>
+                                        <p><span class="font-medium">Engagement up 24%</span> on Phase 1 video</p>
+                                        <p class="text-gray-400">5 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Dashboard -->
+            <section id="analytics" class="phase-content hidden">
+                <div class="mb-5">
+                    <h1 class="text-lg font-bold gradient-text mb-1">Real-time Analytics Dashboard</h1>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Live metrics and performance tracking</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                    <!-- Sentiment Analysis -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-sm font-bold flex items-center">
+                                <i class="fas fa-comment-dots mr-2 text-ebs-orange"></i>
+                                Sentiment Analysis
+                            </h2>
+                            <select id="sentimentTimeframe" class="text-2xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-transparent">
+                                <option>Last 24 hours</option>
+                                <option>Last 7 days</option>
+                                <option selected>Last 30 days</option>
+                                <option>Campaign Total</option>
+                            </select>
+                        </div>
+                        <div class="h-40 flex items-end space-x-2 mb-3">
+                            <!-- Sentiment bars will be generated by JS -->
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div>
+                                <div class="text-lg font-bold sentiment-positive">76%</div>
+                                <div class="text-2xs text-gray-500">Positive</div>
+                            </div>
+                            <div>
+                                <div class="text-lg font-bold sentiment-neutral">18%</div>
+                                <div class="text-2xs text-gray-500">Neutral</div>
+                            </div>
+                            <div>
+                                <div class="text-lg font-bold sentiment-negative">6%</div>
+                                <div class="text-2xs text-gray-500">Negative</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Geographic Engagement -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                        <h2 class="text-sm font-bold mb-3 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2 text-ebs-orange"></i>
+                            Geographic Engagement
+                        </h2>
+                        <div class="h-60 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="relative w-48 h-48 mx-auto mb-2">
+                                    <!-- Ethiopia map representation -->
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="text-4xs font-bold text-gray-300 dark:text-gray-700">ETHIOPIA</div>
+                                    </div>
+                                    <div class="absolute top-10 left-16 w-6 h-6 bg-ebs-orange-light rounded-full opacity-80"></div>
+                                    <div class="absolute top-20 right-20 w-8 h-8 bg-ebs-orange rounded-full opacity-90"></div>
+                                    <div class="absolute bottom-16 left-24 w-10 h-10 bg-ebs-orange-dark rounded-full"></div>
+                                    <div class="absolute bottom-20 right-16 w-5 h-5 bg-ebs-orange-light rounded-full opacity-70"></div>
+                                    <div class="absolute top-32 left-32 w-7 h-7 bg-ebs-orange rounded-full opacity-85"></div>
+                                </div>
+                                <p class="text-2xs text-gray-500">Engagement hotspots across Ethiopia</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Platform Performance -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-5">
+                    <h2 class="text-sm font-bold mb-3 flex items-center">
+                        <i class="fas fa-chart-pie mr-2 text-ebs-orange"></i>
+                        Platform Performance
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div class="flex items-center p-2 border border-gray-200 dark:border-gray-700 rounded">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3">
+                                <i class="fab fa-tiktok text-blue-600 dark:text-blue-300 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold">TikTok</div>
+                                <div class="text-2xs text-gray-500">124.5K engagements</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-2 border border-gray-200 dark:border-gray-700 rounded">
+                            <div class="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900 flex items-center justify-center mr-3">
+                                <i class="fab fa-instagram text-pink-600 dark:text-pink-300 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold">Instagram</div>
+                                <div class="text-2xs text-gray-500">78.2K engagements</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-2 border border-gray-200 dark:border-gray-700 rounded">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3">
+                                <i class="fab fa-facebook text-blue-600 dark:text-blue-300 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold">Facebook</div>
+                                <div class="text-2xs text-gray-500">45.7K engagements</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-2 border border-gray-200 dark:border-gray-700 rounded">
+                            <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-3">
+                                <i class="fab fa-youtube text-red-600 dark:text-red-300 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold">YouTube</div>
+                                <div class="text-2xs text-gray-500">32.1K engagements</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Performing Content -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                    <h2 class="text-sm font-bold mb-3 flex items-center">
+                        <i class="fas fa-fire mr-2 text-ebs-orange"></i>
+                        Top Performing Content
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-2xs">
+                            <thead>
+                                <tr class="border-b border-gray-200 dark:border-gray-700">
+                                    <th class="text-left py-2">Content</th>
+                                    <th class="text-left py-2">Platform</th>
+                                    <th class="text-left py-2">Engagements</th>
+                                    <th class="text-left py-2">Sentiment</th>
+                                    <th class="text-left py-2">Published</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-100 dark:border-gray-800">
+                                    <td class="py-2">"This Is Our Story" video</td>
+                                    <td class="py-2">TikTok</td>
+                                    <td class="py-2 font-bold">45,892</td>
+                                    <td class="py-2 sentiment-positive">89%</td>
+                                    <td class="py-2">5 days ago</td>
+                                </tr>
+                                <tr class="border-b border-gray-100 dark:border-gray-800">
+                                    <td class="py-2">#MyEBSStory compilation</td>
+                                    <td class="py-2">Instagram</td>
+                                    <td class="py-2 font-bold">32,145</td>
+                                    <td class="py-2 sentiment-positive">92%</td>
+                                    <td class="py-2">2 days ago</td>
+                                </tr>
+                                <tr class="border-b border-gray-100 dark:border-gray-800">
+                                    <td class="py-2">Host personal story</td>
+                                    <td class="py-2">TikTok</td>
+                                    <td class="py-2 font-bold">28,673</td>
+                                    <td class="py-2 sentiment-positive">87%</td>
+                                    <td class="py-2">1 week ago</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">Humanitarian highlight</td>
+                                    <td class="py-2">Facebook</td>
+                                    <td class="py-2 font-bold">18,432</td>
+                                    <td class="py-2 sentiment-positive">94%</td>
+                                    <td class="py-2">3 days ago</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Calendar -->
+            <section id="calendar" class="phase-content hidden">
+                <div class="mb-5">
+                    <h1 class="text-lg font-bold gradient-text mb-1">Automated Content Calendar</h1>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Schedule and manage all social media content</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+                    <div class="col-span-2">
+                        <!-- Calendar View -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-sm font-bold flex items-center">
+                                    <i class="fas fa-calendar mr-2 text-ebs-orange"></i>
+                                    Weekly Schedule
+                                </h2>
+                                <div class="flex space-x-2">
+                                    <button id="prevWeek" class="text-gray-500 hover:text-ebs-orange p-1">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <span id="currentWeek" class="text-xs font-medium">May 27 - Jun 2, 2024</span>
+                                    <button id="nextWeek" class="text-gray-500 hover:text-ebs-orange p-1">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-7 gap-1 mb-2 text-center text-2xs">
+                                <div class="font-medium py-1">Mon</div>
+                                <div class="font-medium py-1">Tue</div>
+                                <div class="font-medium py-1">Wed</div>
+                                <div class="font-medium py-1">Thu</div>
+                                <div class="font-medium py-1">Fri</div>
+                                <div class="font-medium py-1">Sat</div>
+                                <div class="font-medium py-1">Sun</div>
+                            </div>
+                            
+                            <div class="grid grid-cols-7 gap-1 text-center" id="calendarDays">
+                                <!-- Calendar days will be generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Schedule -->
+                    <div>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
+                            <h2 class="text-sm font-bold mb-3 flex items-center">
+                                <i class="fas fa-plus-circle mr-2 text-ebs-orange"></i>
+                                Quick Schedule
+                            </h2>
+                            <div class="space-y-3">
+                                <input type="text" placeholder="Post title" class="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-transparent">
+                                <select class="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-transparent">
+                                    <option>Select platform</option>
+                                    <option>TikTok</option>
+                                    <option>Instagram</option>
+                                    <option>Facebook</option>
+                                    <option>YouTube</option>
+                                </select>
+                                <input type="datetime-local" class="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-transparent">
+                                <button class="w-full gradient-bg text-white text-xs font-medium py-2 rounded">Schedule Post</button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                            <h2 class="text-sm font-bold mb-3 flex items-center">
+                                <i class="fas fa-bolt mr-2 text-ebs-orange"></i>
+                                Upcoming Posts
+                            </h2>
+                            <div class="space-y-2 max-h-60 overflow-y-auto">
+                                <div class="calendar-event border-l-ebs-orange-light bg-ebs-orange-light/5 dark:bg-ebs-orange-light/10 p-2 rounded">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="text-xs font-medium">Behind the Laughter</p>
+                                            <p class="text-2xs text-gray-500">TikTok • Tomorrow, 3:00 PM</p>
+                                        </div>
+                                        <span class="text-3xs bg-ebs-orange-light text-white px-1.5 py-0.5 rounded">Scheduled</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="calendar-event border-l-ebs-orange bg-ebs-orange/5 dark:bg-ebs-orange/10 p-2 rounded">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="text-xs font-medium">Impact Journey</p>
+                                            <p class="text-2xs text-gray-500">Instagram • Jun 3, 11:00 AM</p>
+                                        </div>
+                                        <span class="text-3xs bg-ebs-orange text-white px-1.5 py-0.5 rounded">Scheduled</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="calendar-event border-l-ebs-orange-dark bg-ebs-orange-dark/5 dark:bg-ebs-orange-dark/10 p-2 rounded">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="text-xs font-medium">Your Voice Here</p>
+                                            <p class="text-2xs text-gray-500">Facebook • Jun 4, 2:30 PM</p>
+                                        </div>
+                                        <span class="text-3xs bg-ebs-orange-dark text-white px-1.5 py-0.5 rounded">Scheduled</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alert System -->
+            <section id="alerts" class="phase-content hidden">
+                <div class="mb-5">
+                    <h1 class="text-lg font-bold gradient-text mb-1">Crisis Alert System</h1>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Monitor and respond to potential issues in real-time</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+                    <!-- Alert Dashboard -->
+                    <div class="col-span-2">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-sm font-bold flex items-center">
+                                    <i class="fas fa-exclamation-triangle mr-2 text-ebs-orange"></i>
+                                    Active Alerts
+                                </h2>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-2xs px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded">1 Critical</span>
+                                    <span class="text-2xs px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded">1 Warning</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Critical Alert -->
+                            <div class="alert-critical mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-3 mt-0.5">
+                                        <i class="fas fa-fire text-red-600 dark:text-red-300 text-sm"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="text-xs font-bold">Negative Sentiment Spike</h3>
+                                                <p class="text-2xs text-gray-600 dark:text-gray-400">Multiple coordinated negative comments detected on TikTok</p>
+                                            </div>
+                                            <span class="text-3xs bg-red-600 text-white px-1.5 py-0.5 rounded">CRITICAL</span>
+                                        </div>
+                                        <div class="mt-2 flex items-center text-2xs">
+                                            <span class="text-red-600 dark:text-red-400 font-medium mr-3">42 negative comments in 30 min</span>
+                                            <span class="text-gray-500">Triggered 15 min ago</span>
+                                        </div>
+                                        <div class="mt-2 flex space-x-2">
+                                            <button class="text-2xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded">View Comments</button>
+                                            <button class="text-2xs border border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 px-2 py-1 rounded">Dismiss</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Warning Alert -->
+                            <div class="mb-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center mr-3 mt-0.5">
+                                        <i class="fas fa-exclamation text-yellow-600 dark:text-yellow-300 text-sm"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="text-xs font-bold">Engagement Drop Detected</h3>
+                                                <p class="text-2xs text-gray-600 dark:text-gray-400">Facebook engagement decreased by 35% compared to yesterday</p>
+                                            </div>
+                                            <span class="text-3xs bg-yellow-600 text-white px-1.5 py-0.5 rounded">WARNING</span>
+                                        </div>
+                                        <div class="mt-2 flex items-center text-2xs">
+                                            <span class="text-yellow-600 dark:text-yellow-400 font-medium mr-3">12.4K → 8.1K engagements</span>
+                                            <span class="text-gray-500">Triggered 2 hours ago</span>
+                                        </div>
+                                        <div class="mt-2 flex space-x-2">
+                                            <button class="text-2xs bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 rounded">Analyze</button>
+                                            <button class="text-2xs border border-yellow-600 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/30 px-2 py-1 rounded">Snooze 24h</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Resolved Alert -->
+                            <div class="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-3 mt-0.5">
+                                        <i class="fas fa-check text-green-600 dark:text-green-300 text-sm"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="text-xs font-bold">False Narrative Countered</h3>
+                                                <p class="text-2xs text-gray-600 dark:text-gray-400">#MyEBSStory campaign successfully countered negative trend</p>
+                                            </div>
+                                            <span class="text-3xs bg-green-600 text-white px-1.5 py-0.5 rounded">RESOLVED</span>
+                                        </div>
+                                        <div class="mt-2 flex items-center text-2xs">
+                                            <span class="text-green-600 dark:text-green-400 font-medium mr-3">Positive sentiment restored to 86%</span>
+                                            <span class="text-gray-500">Resolved yesterday</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alert Settings -->
+                    <div>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
+                            <h2 class="text-sm font-bold mb-3 flex items-center">
+                                <i class="fas fa-sliders-h mr-2 text-ebs-orange"></i>
+                                Alert Thresholds
+                            </h2>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-2xs font-medium block mb-1">Negative Sentiment (%)</label>
+                                    <div class="flex items-center">
+                                        <input type="range" min="1" max="30" value="15" class="flex-1" id="negSentimentThreshold">
+                                        <span class="text-2xs font-bold ml-2" id="negValue">15%</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="text-2xs font-medium block mb-1">Engagement Drop (%)</label>
+                                    <div class="flex items-center">
+                                        <input type="range" min="10" max="50" value="30" class="flex-1" id="engageDropThreshold">
+                                        <span class="text-2xs font-bold ml-2" id="engageValue">30%</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="text-2xs font-medium block mb-1">Response Time (hours)</label>
+                                    <div class="flex items-center">
+                                        <input type="range" min="1" max="24" value="4" class="flex-1" id="responseTimeThreshold">
+                                        <span class="text-2xs font-bold ml-2" id="responseValue">4h</span>
+                                    </div>
+                                </div>
+                                
+                                <button class="w-full gradient-bg text-white text-xs font-medium py-2 rounded mt-2">Save Settings</button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                            <h2 class="text-sm font-bold mb-3 flex items-center">
+                                <i class="fas fa-history mr-2 text-ebs-orange"></i>
+                                Alert History (7 days)
+                            </h2>
+                            <div class="space-y-2 text-2xs">
+                                <div class="flex justify-between">
+                                    <span>Critical Alerts</span>
+                                    <span class="font-bold">3</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Warning Alerts</span>
+                                    <span class="font-bold">7</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Avg Response Time</span>
+                                    <span class="font-bold">2.3 hours</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Auto-resolved</span>
+                                    <span class="font-bold">5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 1-3 Content (Existing Strategy Content) -->
+            <section id="phase1" class="phase-content hidden">
+                <!-- Phase 1 content from previous version would go here -->
+                <div class="text-center py-10">
+                    <h2 class="text-lg font-bold gradient-text mb-2">Phase 1: Foundation Video</h2>
+                    <p class="text-sm text-gray-500">Complete content available in the strategy overview section</p>
+                    <button class="mt-4 gradient-bg text-white text-xs font-medium px-4 py-2 rounded" onclick="switchToOverview()">View Strategy Overview</button>
+                </div>
+            </section>
+            
+            <section id="phase2" class="phase-content hidden">
+                <div class="text-center py-10">
+                    <h2 class="text-lg font-bold gradient-text mb-2">Phase 2: #MyEBSStory Campaign</h2>
+                    <p class="text-sm text-gray-500">Complete content available in the strategy overview section</p>
+                    <button class="mt-4 gradient-bg text-white text-xs font-medium px-4 py-2 rounded" onclick="switchToOverview()">View Strategy Overview</button>
+                </div>
+            </section>
+            
+            <section id="phase3" class="phase-content hidden">
+                <div class="text-center py-10">
+                    <h2 class="text-lg font-bold gradient-text mb-2">Phase 3: Sustained Defense</h2>
+                    <p class="text-sm text-gray-500">Complete content available in the strategy overview section</p>
+                    <button class="mt-4 gradient-bg text-white text-xs font-medium px-4 py-2 rounded" onclick="switchToOverview()">View Strategy Overview</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+            <div class="flex items-center justify-between p-4 border-b">
+                <h3 class="text-sm font-bold flex items-center">
+                    <i class="fas fa-cog mr-2 text-ebs-orange"></i>
+                    Dashboard Settings
+                </h3>
+                <button id="closeSettings" class="text-gray-500 hover:text-ebs-orange">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-medium block mb-2">Auto-refresh Interval</label>
+                        <select class="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-transparent">
+                            <option>30 seconds</option>
+                            <option selected>1 minute</option>
+                            <option>5 minutes</option>
+                            <option>10 minutes</option>
+                            <option>Manual refresh only</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs font-medium block mb-2">Default View</label>
+                        <select class="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-transparent">
+                            <option selected>Overview</option>
+                            <option>Analytics</option>
+                            <option>Calendar</option>
+                            <option>Alerts</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-medium">Dark Mode</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="darkModeToggle" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ebs-orange"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-medium">Sound Alerts</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ebs-orange"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="pt-4 border-t">
+                        <button class="w-full gradient-bg text-white text-xs font-medium py-2 rounded">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Preview Modal -->
+    <div id="printModal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl h-5/6 flex flex-col">
+            <div class="flex items-center justify-between p-3 border-b">
+                <h3 class="text-sm font-bold flex items-center">
+                    <i class="fas fa-print text-ebs-orange mr-2"></i>
+                    <span id="printTitle" class="gradient-text">Dashboard Report</span>
+                </h3>
+                <div class="flex items-center space-x-2">
+                    <button id="zoomOut" class="text-gray-500 hover:text-ebs-orange p-1">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button id="zoomIn" class="text-gray-500 hover:text-ebs-orange p-1">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button id="closePrint" class="text-gray-500 hover:text-ebs-orange p-1">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto p-4">
+                <div id="printContent" class="print-preview mx-auto bg-white dark:bg-gray-900 p-6 rounded border border-gray-300 dark:border-gray-700 shadow-lg">
+                    <!-- Content will be inserted here -->
+                </div>
+            </div>
+            <div class="p-3 border-t text-center text-2xs text-gray-500">
+                <p>EBS Brand Narrative & Community Engagement • Quarter 1 Enhanced Dashboard • Confidential</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Live time update
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false 
+                });
+                document.getElementById('liveTime').textContent = `${now.toLocaleDateString()} ${timeString}`;
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Simulate live data updates
+            function simulateLiveData() {
+                // Update engagement count
+                const engagement = document.getElementById('totalEngagement');
+                let current = parseInt(engagement.textContent.replace(/,/g, ''));
+                let change = Math.floor(Math.random() * 50) + 10;
+                engagement.textContent = (current + change).toLocaleString();
+                
+                // Update sync status
+                const sync = document.getElementById('dataSync');
+                sync.innerHTML = `<i class="fas fa-check text-green-500 mr-1"></i> Synced ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, '0')}`;
+                
+                setTimeout(() => {
+                    sync.innerHTML = `<i class="fas fa-sync-alt mr-1 animate-spin"></i> Syncing...`;
+                }, 5000);
+            }
+            
+            simulateLiveData();
+            setInterval(simulateLiveData, 10000);
+
+            // Initialize sentiment chart
+            initSentimentChart();
+            
+            // Initialize calendar
+            initCalendar();
+            
+            // Initialize alert sliders
+            initAlertSliders();
+            
+            // Initialize flatpickr
+            flatpickr("input[type=datetime-local]", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+            });
+        });
+
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const icon = document.querySelector('#themeToggle i');
+            if (document.documentElement.classList.contains('dark')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+
+        // Sidebar Navigation
+        const sidebarBtns = document.querySelectorAll('.sidebar-btn');
+        const phaseContents = document.querySelectorAll('.phase-content');
+        
+        sidebarBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetPhase = btn.getAttribute('data-phase');
+                
+                // Update active button
+                sidebarBtns.forEach(b => {
+                    b.classList.remove('active');
+                    b.querySelector('i').classList.remove('text-ebs-orange');
+                });
+                btn.classList.add('active');
+                btn.querySelector('i').classList.add('text-ebs-orange');
+                
+                // Show target content
+                phaseContents.forEach(content => {
+                    content.classList.add('hidden');
+                    content.classList.remove('active');
+                });
+                
+                document.getElementById(targetPhase).classList.remove('hidden');
+                document.getElementById(targetPhase).classList.add('active');
+                
+                // Scroll to top
+                document.querySelector('main').scrollTop = 0;
+            });
+        });
+
+        // Settings Modal
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettings = document.getElementById('closeSettings');
+        
+        settingsBtn.addEventListener('click', () => {
+            settingsModal.classList.remove('hidden');
+        });
+        
+        closeSettings.addEventListener('click', () => {
+            settingsModal.classList.add('hidden');
+        });
+        
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.add('hidden');
+            }
+        });
+
+        // Initialize Sentiment Chart
+        function initSentimentChart() {
+            const container = document.querySelector('#analytics .h-40');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            
+            days.forEach(day => {
+                const positive = Math.floor(Math.random() * 40) + 50;
+                const negative = Math.floor(Math.random() * 10) + 5;
+                const neutral = 100 - positive - negative;
+                
+                const bar = document.createElement('div');
+                bar.className = 'flex flex-col items-center flex-1';
+                bar.innerHTML = `
+                    <div class="relative w-full h-32 mb-1">
+                        <div class="absolute bottom-0 w-full bg-green-200 dark:bg-green-900/30 rounded-t" style="height: ${positive}%"></div>
+                        <div class="absolute bottom-0 w-full bg-gray-300 dark:bg-gray-700/50 rounded-t" style="height: ${neutral}%"></div>
+                        <div class="absolute bottom-0 w-full bg-red-200 dark:bg-red-900/30 rounded-t" style="height: ${negative}%"></div>
+                    </div>
+                    <span class="text-3xs text-gray-500">${day}</span>
+                `;
+                container.appendChild(bar);
+            });
+        }
+
+        // Initialize Calendar
+        function initCalendar() {
+            const container = document.getElementById('calendarDays');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            const today = new Date();
+            const firstDay = new Date(today);
+            firstDay.setDate(today.getDate() - today.getDay() + 1);
+            
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(firstDay);
+                day.setDate(firstDay.getDate() + i);
+                
+                const dayElement = document.createElement('div');
+                dayElement.className = `border border-gray-200 dark:border-gray-700 rounded p-1 min-h-20 ${day.getDate() === today.getDate() ? 'gradient-bg text-white' : ''}`;
+                
+                const events = Math.floor(Math.random() * 3);
+                let eventsHTML = '';
+                
+                for (let j = 0; j < events; j++) {
+                    const colors = ['ebs-orange-light', 'ebs-orange', 'ebs-orange-dark'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    eventsHTML += `<div class="text-3xs bg-${color}/20 text-${color} px-1 py-0.5 rounded mb-0.5 truncate">Post</div>`;
+                }
+                
+                dayElement.innerHTML = `
+                    <div class="text-2xs font-medium mb-1 ${day.getDate() === today.getDate() ? 'text-white' : ''}">${day.getDate()}</div>
+                    ${eventsHTML}
+                `;
+                
+                container.appendChild(dayElement);
+            }
+        }
+
+        // Initialize Alert Sliders
+        function initAlertSliders() {
+            const sentimentSlider = document.getElementById('negSentimentThreshold');
+            const sentimentValue = document.getElementById('negValue');
+            const engageSlider = document.getElementById('engageDropThreshold');
+            const engageValue = document.getElementById('engageValue');
+            const responseSlider = document.getElementById('responseTimeThreshold');
+            const responseValue = document.getElementById('responseValue');
+            
+            if (sentimentSlider) {
+                sentimentSlider.addEventListener('input', () => {
+                    sentimentValue.textContent = sentimentSlider.value + '%';
+                });
+            }
+            
+            if (engageSlider) {
+                engageSlider.addEventListener('input', () => {
+                    engageValue.textContent = engageSlider.value + '%';
+                });
+            }
+            
+            if (responseSlider) {
+                responseSlider.addEventListener('input', () => {
+                    responseValue.textContent = responseSlider.value + 'h';
+                });
+            }
+        }
+
+        // Calendar Navigation
+        document.getElementById('prevWeek')?.addEventListener('click', () => {
+            alert('Previous week - would load previous week data');
+        });
+        
+        document.getElementById('nextWeek')?.addEventListener('click', () => {
+            alert('Next week - would load next week data');
+        });
+
+        // Switch to overview function
+        window.switchToOverview = function() {
+            sidebarBtns.forEach(b => {
+                b.classList.remove('active');
+                b.querySelector('i').classList.remove('text-ebs-orange');
+            });
+            
+            document.querySelector('[data-phase="overview"]').classList.add('active');
+            document.querySelector('[data-phase="overview"] i').classList.add('text-ebs-orange');
+            
+            phaseContents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('active');
+            });
+            
+            document.getElementById('overview').classList.remove('hidden');
+            document.getElementById('overview').classList.add('active');
+            
+            document.querySelector('main').scrollTop = 0;
+        };
+
+        // Print functionality
+        const printModal = document.getElementById('printModal');
+        const printContent = document.getElementById('printContent');
+        const printTitle = document.getElementById('printTitle');
+        let currentScale = 0.9;
+        
+        document.getElementById('printBtn').addEventListener('click', () => {
+            const currentSection = document.querySelector('.phase-content.active');
+            const sectionId = currentSection.id;
+            
+            let title = '';
+            let content = '';
+            
+            switch(sectionId) {
+                case 'overview':
+                    title = 'EBS Dashboard - Overview Report';
+                    content = document.getElementById('overview').innerHTML;
+                    break;
+                case 'analytics':
+                    title = 'EBS Dashboard - Analytics Report';
+                    content = document.getElementById('analytics').innerHTML;
+                    break;
+                case 'calendar':
+                    title = 'EBS Dashboard - Calendar Report';
+                    content = document.getElementById('calendar').innerHTML;
+                    break;
+                case 'alerts':
+                    title = 'EBS Dashboard - Alerts Report';
+                    content = document.getElementById('alerts').innerHTML;
+                    break;
+                default:
+                    title = 'EBS Brand Strategy Report';
+                    content = `<h1 class="text-2xl font-bold gradient-text mb-4">EBS Brand Narrative & Community Engagement Strategy</h1>
+                              <p class="text-sm mb-4">Quarter 1 Enhanced Dashboard Report</p>
+                              <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                  <h2 class="font-bold mb-2">Current Metrics</h2>
+                                  <p>#MyEBSStory Videos: 4,237</p>
+                                  <p>Positive Sentiment: 86%</p>
+                                  <p>Active Alerts: 2</p>
+                                </div>
+                                <div>
+                                  <h2 class="font-bold mb-2">Campaign Status</h2>
+                                  <p>Phase 1: 100% Complete</p>
+                                  <p>Phase 2: 65% Complete</p>
+                                  <p>Phase 3: 20% Complete</p>
+                                </div>
+                              </div>`;
+            }
+            
+            printTitle.textContent = title;
+            printContent.innerHTML = `
+                <div class="max-w-3xl">
+                    <div class="text-center mb-6 border-b pb-4">
+                        <div class="flex items-center justify-center mb-2">
+                            <div class="logo-bubble w-10 h-10 rounded-full flex items-center justify-center mr-2">
+                                <span class="text-ebs-orange-dark font-bold text-lg">EBS</span>
+                            </div>
+                            <div>
+                                <h1 class="text-2xl font-bold gradient-text">${title}</h1>
+                                <p class="text-sm text-gray-600">Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-content">
+                        ${content}
+                    </div>
+                    <div class="mt-8 p-4 border-t text-xs text-gray-500">
+                        <p>EBS Brand Narrative & Community Engagement Strategy • Quarter 1 Enhanced Dashboard</p>
+                        <p>Generated by Social Media Manager • For internal use only</p>
+                    </div>
+                </div>
+            `;
+            
+            currentScale = 0.9;
+            printContent.style.transform = `scale(${currentScale})`;
+            printModal.classList.remove('hidden');
+        });
+
+        // Print modal controls
+        document.getElementById('zoomIn').addEventListener('click', () => {
+            currentScale = Math.min(currentScale + 0.1, 1.5);
+            printContent.style.transform = `scale(${currentScale})`;
+        });
+
+        document.getElementById('zoomOut').addEventListener('click', () => {
+            currentScale = Math.max(currentScale - 0.1, 0.5);
+            printContent.style.transform = `scale(${currentScale})`;
+        });
+
+        document.getElementById('closePrint').addEventListener('click', () => {
+            printModal.classList.add('hidden');
+        });
+
+        printModal.addEventListener('click', (e) => {
+            if (e.target === printModal) {
+                printModal.classList.add('hidden');
+            }
+        });
+
+        // Sentiment timeframe change
+        document.getElementById('sentimentTimeframe')?.addEventListener('change', function() {
+            initSentimentChart();
+        });
+    </script>
+</body>
+</html>
