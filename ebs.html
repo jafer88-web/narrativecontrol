@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBS | Social Media Strategy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        body { -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 3px; height: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #FFB347, #FF8C00, #CC5500); }
+        .dark ::-webkit-scrollbar-track { background: #1a1a1a; }
+        .gradient-bg { background: linear-gradient(135deg, #FFB347 0%, #FF8C00 50%, #CC5500 100%); }
+        .gradient-text { background: linear-gradient(90deg, #FFB347, #FF8C00, #CC5500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-gradient { background: linear-gradient(90deg, #FF8C00 0%, #CC5500 100%); }
+        .phase-card { border-left: 3px solid; }
+        .scene-tag { font-size: 9px; letter-spacing: 0.05em; }
+        .sidebar-btn.active { border-left: 2px solid #FF8C00; background: rgba(255, 140, 0, 0.08); }
+        .logo-bubble { 
+            background: white; 
+            border: 1.5px solid #CC5500; 
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.8), 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .print-preview { transform-origin: top center; }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'ebs-orange-light': '#FFB347',
+                        'ebs-orange': '#FF8C00',
+                        'ebs-orange-dark': '#CC5500',
+                        'ebs-white': '#FFFFFF',
+                        'ebs-charcoal': '#1a1a1a'
+                    },
+                    fontSize: {
+                        '2xs': '0.65rem',
+                        '3xs': '0.55rem',
+                        '4xs': '0.45rem'
+                    },
+                    spacing: {
+                        '18': '4.5rem',
+                        '88': '22rem'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden h-screen">
+    <!-- Fixed Header -->
+    <header class="fixed top-0 left-0 right-0 h-9 header-gradient text-white flex items-center justify-between px-3 z-30">
+        <div class="flex items-center space-x-2">
+            <!-- EBS Logo Bubble -->
+<div class="logo-bubble w-6 h-6 rounded-full flex items-center justify-center">
+<img src="ebs.png" class="w-6 h-6">
+<span class="text-ebs-orange-dark font-bold text-xs" hidden>EBS</span>
+</div>
+<span class="text-xs font-semibold tracking-tight">EBS Brand Narrative Control Strategy</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button id="themeToggle" class="text-white/80 hover:text-white transition">
+                <i class="fas fa-moon text-xs"></i>
+            </button>
+            <div class="text-2xs text-white/60">v1.1</div>
+        </div>
+    </header>
+
+    <!-- Fixed Footer -->
+<footer class="fixed bottom-0 left-0 right-0 h-10 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between px-3 z-30">
+<div class="flex items-center space-x-2">
+<div class="gradient-bg w-5 h-5 rounded-full flex items-center justify-center">
+<img src="jfr.png" class="w-5 h-5 rounded max-w-5 max-h-5" style="border-radius: 100%;">
+<span class="text-white text-2xs font-bold" hidden>SM</span>
+</div>
+<span class="text-2xs font-medium">@jafernegery</span>
+</div>
+        <div class="text-2xs text-gray-400">
+            <span class="text-ebs-orange">#MyEBSStory</span> Campaign
+        </div>
+    </footer>
+
+    <!-- Main Container -->
+    <div class="flex pt-9 pb-7 h-full">
+        <!-- Sidebar -->
+        <aside class="w-11 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col items-center py-2 space-y-2">
+            <button data-phase="overview" class="sidebar-btn active w-8 h-8 flex items-center justify-center rounded">
+                <i class="fas fa-crosshairs text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <button data-phase="phase1" class="sidebar-btn w-8 h-8 flex items-center justify-center rounded">
+                <i class="fas fa-play-circle text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <button data-phase="phase2" class="sidebar-btn w-8 h-8 flex items-center justify-center rounded">
+                <i class="fas fa-hashtag text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <button data-phase="phase3" class="sidebar-btn w-8 h-8 flex items-center justify-center rounded">
+                <i class="fas fa-shield-alt text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <div class="flex-1"></div>
+            <button id="printBtn" class="sidebar-btn w-8 h-8 flex items-center justify-center rounded">
+                <i class="fas fa-print text-xs text-gray-600 dark:text-gray-400"></i>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-3">
+            <!-- Overview -->
+            <section id="overview" class="phase-content active">
+                <div class="mb-5">
+                    <h1 class="text-base font-bold gradient-text mb-1">EBS Brand Narratives</h1>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Counter false narratives with confident reaffirmation</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-5">
+                    <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-xs font-semibold">Core Principle</h3>
+                            <i class="fas fa-bullseye text-ebs-orange text-xs"></i>
+                        </div>
+                        <p class="text-2xs">Lead with positive affirmation. Turn viewers into brand defenders.</p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-xs font-semibold">Platform</h3>
+                            <i class="fab fa-tiktok text-gray-700 dark:text-gray-300 text-xs"></i>
+                        </div>
+                        <p class="text-2xs">Primary: TikTok. 90-second video + hashtag campaign.</p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-xs font-semibold">Tone</h3>
+                            <i class="fas fa-volume-up text-ebs-orange-light text-xs"></i>
+                        </div>
+                        <p class="text-2xs">Proud but humble. Confident, warm & authentically Ethiopian.</p>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <h2 class="text-xs font-bold mb-2 flex items-center">
+                        <i class="fas fa-palette mr-2 text-ebs-orange"></i>
+                        EBS Brand Colors
+                    </h2>
+                    <div class="flex space-x-1 mb-3">
+                        <div class="flex flex-col items-center">
+                            <div class="w-7 h-7 rounded-sm bg-ebs-orange-light" title="Bright Yellowish-Orange"></div>
+                            <span class="text-3xs mt-1">#FFB347</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-7 h-7 rounded-sm bg-ebs-orange" title="Vibrant Orange"></div>
+                            <span class="text-3xs mt-1">#FF8C00</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-7 h-7 rounded-sm bg-ebs-orange-dark" title="Deep Burnt Orange"></div>
+                            <span class="text-3xs mt-1">#CC5500</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-7 h-7 rounded-sm bg-white border border-gray-300" title="White"></div>
+                            <span class="text-3xs mt-1">#FFFFFF</span>
+                        </div>
+                    </div>
+                    <p class="text-2xs text-gray-600 dark:text-gray-400">Gradient from light to dark orange with white for contrast</p>
+                </div>
+
+                <div>
+                    <h2 class="text-xs font-bold mb-2 flex items-center">
+                        <i class="fas fa-road mr-2 text-ebs-orange-dark"></i>
+                        Strategy Roadmap
+                    </h2>
+                    <div class="space-y-1">
+                        <div class="flex items-center text-2xs">
+                            <div class="w-4 h-4 rounded-full gradient-bg mr-2 flex items-center justify-center">
+                                <i class="fas fa-play text-white text-3xs"></i>
+                            </div>
+                            <span>Phase 1: Foundation Video - "This Is Our Story" (90s)</span>
+                        </div>
+                        <div class="flex items-center text-2xs">
+                            <div class="w-4 h-4 rounded-full gradient-bg mr-2 flex items-center justify-center">
+                                <i class="fas fa-hashtag text-white text-3xs"></i>
+                            </div>
+                            <span>Phase 2: #MyEBSStory Hashtag Campaign</span>
+                        </div>
+                        <div class="flex items-center text-2xs">
+                            <div class="w-4 h-4 rounded-full gradient-bg mr-2 flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-white text-3xs"></i>
+                            </div>
+                            <span>Phase 3: Sustained Narrative Defense</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 1 -->
+            <section id="phase1" class="phase-content hidden">
+                <div class="phase-card border-l-ebs-orange pl-2 mb-5">
+                    <div class="flex items-center mb-2">
+                        <h1 class="text-base font-bold">Phase 1: Foundation Video</h1>
+                        <span class="ml-2 gradient-bg text-white px-1.5 py-0.5 rounded-full scene-tag">90 SECONDS</span>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">"This Is Our Story" - Direct-to-camera reaffirmation with emotional montage</p>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Scene 1 -->
+                    <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-xs font-semibold flex items-center">
+                                <span class="w-4 h-4 rounded-full bg-ebs-orange text-white flex items-center justify-center text-3xs mr-1">1</span>
+                                Scene 1: Direct Address (0-10s)
+                            </h3>
+                            <button class="print-scene-btn text-3xs text-ebs-orange" data-scene="scene1">
+                                <i class="fas fa-expand-alt mr-0.5"></i>Preview
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-2xs">
+                            <div>
+                                <p class="font-medium mb-0.5">Visual</p>
+                                <p>Trusted host on camera. Orange gradient backdrop. Casual professional.</p>
+                            </div>
+                            <div>
+                                <p class="font-medium mb-0.5">Script</p>
+                                <p class="italic text-2xs">"Lately, we've seen many voices speaking about EBS. Today, we want to speak directly to you—our audience..."</p>
+                            </div>
+                            <div>
+                                <p class="font-medium mb-0.5">Execution</p>
+                                <p>Apparel: Neutral colors. Audio: Clear, calm. Text: None (pure direct address).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scene 2 -->
+                    <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-xs font-semibold flex items-center">
+                                <span class="w-4 h-4 rounded-full bg-ebs-orange text-white flex items-center justify-center text-3xs mr-1">2</span>
+                                Scene 2: Proof Montage (10-65s)
+                            </h3>
+                            <button class="print-scene-btn text-3xs text-ebs-orange" data-scene="scene2">
+                                <i class="fas fa-expand-alt mr-0.5"></i>Preview
+                            </button>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-1 p-1 bg-gray-50 dark:bg-gray-900 rounded">
+                                <div>
+                                    <div class="flex items-center mb-0.5">
+                                        <div class="w-2 h-2 rounded-sm bg-ebs-orange-light mr-0.5"></div>
+                                        <p class="font-medium text-2xs">A. Joy Reel (15s)</p>
+                                    </div>
+                                    <p class="text-2xs">Fast cuts of entertainment. Orange text: "15 Years of Shared Laughter".</p>
+                                </div>
+                                <div>
+                                    <div class="flex items-center mb-0.5">
+                                        <div class="w-2 h-2 rounded-sm bg-ebs-orange mr-0.5"></div>
+                                        <p class="font-medium text-2xs">B. Impact Reel (20s)</p>
+                                    </div>
+                                    <p class="text-2xs">Humanitarian footage. Text: "A Voice Where It's Needed Most".</p>
+                                </div>
+                                <div>
+                                    <div class="flex items-center mb-0.5">
+                                        <div class="w-2 h-2 rounded-sm bg-ebs-orange-dark mr-0.5"></div>
+                                        <p class="font-medium text-2xs">C. People Reel (15s)</p>
+                                    </div>
+                                    <p class="text-2xs">User-generated content. Text: "Your Stories. Your Platform."</p>
+                                </div>
+                            </div>
+                            <p class="text-2xs"><i class="fas fa-info-circle text-ebs-orange mr-0.5"></i> <strong>Key:</strong> Rapid cuts (0.5-1s each). Text appears for 2s. Emotional crescendo.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scene 3 -->
+                    <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-xs font-semibold flex items-center">
+                                <span class="w-4 h-4 rounded-full bg-ebs-orange text-white flex items-center justify-center text-3xs mr-1">3</span>
+                                Scene 3: Humble Bridge (65-75s)
+                            </h3>
+                            <button class="print-scene-btn text-3xs text-ebs-orange" data-scene="scene3">
+                                <i class="fas fa-expand-alt mr-0.5"></i>Preview
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-2xs">
+                            <div>
+                                <p class="font-medium mb-0.5">Visual & Tone</p>
+                                <p>Return to host, closer shot. Soft white background. Intimate, sincere.</p>
+                            </div>
+                            <div>
+                                <p class="font-medium mb-0.5">Script</p>
+                                <p class="italic text-2xs">"We are not a perfect channel. We are a passionate one. Every day, our only goal is to serve you..."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scene 4 -->
+                    <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-xs font-semibold flex items-center">
+                                <span class="w-4 h-4 rounded-full bg-ebs-orange text-white flex items-center justify-center text-3xs mr-1">4</span>
+                                Scene 4: Call to Action (75-90s)
+                            </h3>
+                            <button class="print-scene-btn text-3xs text-ebs-orange" data-scene="scene4">
+                                <i class="fas fa-expand-alt mr-0.5"></i>Preview
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-2xs">
+                            <div>
+                                <p class="font-medium mb-0.5">Visual</p>
+                                <p>Final supercut. Ends on powerful wide shot. Bold orange and white text.</p>
+                            </div>
+                            <div>
+                                <p class="font-medium mb-0.5">Script & Text</p>
+                                <p>"This is our story. But it doesn't end here."<br>
+                                <span class="text-ebs-orange font-bold">#MyEBSStory</span><br>
+                                "Share your moment. Let's celebrate together."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-2 bg-gradient-to-r from-ebs-orange-light/10 to-ebs-orange-dark/10 rounded border border-ebs-orange/30">
+                    <h3 class="text-xs font-semibold mb-1 flex items-center">
+                        <i class="fas fa-clipboard-check mr-1 text-ebs-orange-dark"></i>
+                        Phase 1 Success Metrics
+                    </h3>
+                    <ul class="text-2xs space-y-0.5">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-ebs-orange-dark mr-1 text-3xs"></i> Video completion rate > 70%</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-ebs-orange-dark mr-1 text-3xs"></i> Positive comment sentiment > 85%</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-ebs-orange-dark mr-1 text-3xs"></i> First-hour shares > 500</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-ebs-orange-dark mr-1 text-3xs"></i> 5,000+ saves/bookmarks</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Phase 2 -->
+            <section id="phase2" class="phase-content hidden">
+                <div class="phase-card border-l-ebs-orange-light pl-2 mb-5">
+                    <div class="flex items-center mb-2">
+                        <h1 class="text-base font-bold">Phase 2: Hashtag Campaign</h1>
+                        <span class="ml-2 gradient-bg text-white px-1.5 py-0.5 rounded-full scene-tag">#MyEBSStory</span>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Flood TikTok with positive UGC to algorithmically drown out negativity</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2">
+                        <h3 class="text-xs font-semibold mb-2 flex items-center">
+                            <i class="fas fa-seedling text-ebs-orange mr-1"></i>
+                            Launch Tactics
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex items-start text-2xs">
+                                <div class="w-4 h-4 rounded-full bg-ebs-orange/20 flex items-center justify-center mr-1 mt-0.5">
+                                    <span class="text-ebs-orange font-bold text-3xs">1</span>
+                                </div>
+                                <p><strong>Seed Content:</strong> 3-4 videos from top hosts sharing personal "EBS story".</p>
+                            </div>
+                            <div class="flex items-start text-2xs">
+                                <div class="w-4 h-4 rounded-full bg-ebs-orange/20 flex items-center justify-center mr-1 mt-0.5">
+                                    <span class="text-ebs-orange font-bold text-3xs">2</span>
+                                </div>
+                                <p><strong>Incentive:</strong> Weekly feature of best #MyEBSStory video on prime-time broadcast.</p>
+                            </div>
+                            <div class="flex items-start text-2xs">
+                                <div class="w-4 h-4 rounded-full bg-ebs-orange/20 flex items-center justify-center mr-1 mt-0.5">
+                                    <span class="text-ebs-orange font-bold text-3xs">3</span>
+                                </div>
+                                <p><strong>Engagement:</strong> Encourage stitch/duet of main video. Host live Q&A.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2">
+                        <h3 class="text-xs font-semibold mb-2 flex items-center">
+                            <i class="fas fa-bullhorn text-ebs-orange-light mr-1"></i>
+                            Content Prompts
+                        </h3>
+                        <div class="space-y-1 text-2xs">
+                            <p class="flex items-start">
+                                <i class="fas fa-question-circle text-ebs-orange mr-1 mt-0.5 text-3xs"></i>
+                                "What's your earliest memory of watching EBS with family?"
+                            </p>
+                            <p class="flex items-start">
+                                <i class="fas fa-question-circle text-ebs-orange mr-1 mt-0.5 text-3xs"></i>
+                                "Which EBS humanitarian segment moved you?"
+                            </p>
+                            <p class="flex items-start">
+                                <i class="fas fa-question-circle text-ebs-orange mr-1 mt-0.5 text-3xs"></i>
+                                "Show us your best EBS-themed TikTok dance!"
+                            </p>
+                            <p class="flex items-start">
+                                <i class="fas fa-question-circle text-ebs-orange mr-1 mt-0.5 text-3xs"></i>
+                                "Tag the friend you always watch [Show X] with."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2 mb-5">
+                    <h3 class="text-xs font-semibold mb-2 flex items-center">
+                        <i class="fas fa-calendar-alt text-ebs-orange mr-1"></i>
+                        Campaign Timeline
+                    </h3>
+                    <div class="flex items-center space-x-1 overflow-x-auto pb-1">
+                        <div class="flex-shrink-0 w-28 p-1.5 bg-ebs-orange-light/10 rounded border border-ebs-orange-light/30">
+                            <p class="font-bold text-2xs text-ebs-orange-light">Day 1-2</p>
+                            <p class="text-2xs">Launch video + host seed content</p>
+                        </div>
+                        <div class="flex-shrink-0 w-28 p-1.5 bg-ebs-orange/10 rounded border border-ebs-orange/30">
+                            <p class="font-bold text-2xs text-ebs-orange">Day 3-7</p>
+                            <p class="text-2xs">Aggressive UGC promotion</p>
+                        </div>
+                        <div class="flex-shrink-0 w-28 p-1.5 bg-ebs-orange-dark/10 rounded border border-ebs-orange-dark/30">
+                            <p class="font-bold text-2xs text-ebs-orange-dark">Day 8+</p>
+                            <p class="text-2xs">Weekly features & sustained momentum</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-2 bg-gradient-to-r from-ebs-orange-light/10 to-ebs-orange-dark/10 rounded border border-ebs-orange/30">
+                    <h3 class="text-xs font-semibold mb-1 flex items-center">
+                        <i class="fas fa-chart-line mr-1 text-ebs-orange"></i>
+                        Phase 2 Success Metrics
+                    </h3>
+                    <ul class="text-2xs space-y-0.5">
+                        <li class="flex items-center"><i class="fas fa-hashtag text-ebs-orange mr-1 text-3xs"></i> #MyEBSStory: 5,000+ videos in first week</li>
+                        <li class="flex items-center"><i class="fas fa-eye text-ebs-orange mr-1 text-3xs"></i> Hashtag views: 10M+ in 14 days</li>
+                        <li class="flex items-center"><i class="fas fa-users text-ebs-orange mr-1 text-3xs"></i> Community participation: 2% of followers</li>
+                        <li class="flex items-center"><i class="fas fa-share-alt text-ebs-orange mr-1 text-3xs"></i> Algorithmic boost: +40% organic reach</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Phase 3 -->
+            <section id="phase3" class="phase-content hidden">
+                <div class="phase-card border-l-ebs-orange-dark pl-2 mb-5">
+                    <div class="flex items-center mb-2">
+                        <h1 class="text-base font-bold">Phase 3: Sustained Defense</h1>
+                        <span class="ml-2 gradient-bg text-white px-1.5 py-0.5 rounded-full scene-tag">ONGOING</span>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Proactive narrative reinforcement through pillar content</p>
+                </div>
+
+                <div class="mb-5">
+                    <h3 class="text-xs font-semibold mb-2 flex items-center">
+                        <i class="fas fa-th-large text-ebs-orange mr-1"></i>
+                        Pillar Content Series
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <div class="bg-white dark:bg-gray-800 rounded border border-ebs-orange-light/30 p-2">
+                            <div class="flex items-center mb-1">
+                                <div class="w-5 h-5 rounded-sm bg-ebs-orange-light flex items-center justify-center mr-1">
+                                    <i class="fas fa-laugh text-white text-2xs"></i>
+                                </div>
+                                <h4 class="text-xs font-bold">"Behind the Laughter"</h4>
+                            </div>
+                            <p class="text-2xs mb-1"><span class="text-ebs-orange-light">Entertainment • Weekly</span></p>
+                            <p class="text-2xs">60-second fun facts, bloopers, crew stories from popular shows.</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 rounded border border-ebs-orange/30 p-2">
+                            <div class="flex items-center mb-1">
+                                <div class="w-5 h-5 rounded-sm bg-ebs-orange flex items-center justify-center mr-1">
+                                    <i class="fas fa-hands-helping text-white text-2xs"></i>
+                                </div>
+                                <h4 class="text-xs font-bold">"The Impact Journey"</h4>
+                            </div>
+                            <p class="text-2xs mb-1"><span class="text-ebs-orange">Humanitarian • Bi-weekly</span></p>
+                            <p class="text-2xs">90-second follow-ups on past humanitarian stories. "Where are they now?"</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 rounded border border-ebs-orange-dark/30 p-2">
+                            <div class="flex items-center mb-1">
+                                <div class="w-5 h-5 rounded-sm bg-ebs-orange-dark flex items-center justify-center mr-1">
+                                    <i class="fas fa-microphone-alt text-white text-2xs"></i>
+                                </div>
+                                <h4 class="text-xs font-bold">"Your Voice Here"</h4>
+                            </div>
+                            <p class="text-2xs mb-1"><span class="text-ebs-orange-dark">Community • Weekly</span></p>
+                            <p class="text-2xs">Featuring top #MyEBSStory submissions & viewer shoutouts.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-2 mb-5">
+                    <h3 class="text-xs font-semibold mb-2 flex items-center">
+                        <i class="fas fa-comments text-ebs-orange-light mr-1"></i>
+                        Community Management Protocol
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <h4 class="text-xs font-semibold mb-1 text-red-500 flex items-center">
+                                <i class="fas fa-times-circle mr-1 text-xs"></i>Do NOT
+                            </h4>
+                            <ul class="text-2xs space-y-0.5">
+                                <li class="flex items-start">
+                                    <i class="fas fa-ban text-red-400 mr-1 mt-0.5 text-3xs"></i>
+                                    Engage in arguments or quote-tweet negativity
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-ban text-red-400 mr-1 mt-0.5 text-3xs"></i>
+                                    Use defensive or aggressive language
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-ban text-red-400 mr-1 mt-0.5 text-3xs"></i>
+                                    Acknowledge specific false narratives directly
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-semibold mb-1 text-ebs-orange-dark flex items-center">
+                                <i class="fas fa-check-circle mr-1 text-xs"></i>DO
+                            </h4>
+                            <ul class="text-2xs space-y-0.5">
+                                <li class="flex items-start">
+                                    <i class="fas fa-heart text-ebs-orange-light mr-1 mt-0.5 text-3xs"></i>
+                                    Like, share, comment on positive UGC
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-redo text-ebs-orange mr-1 mt-0.5 text-3xs"></i>
+                                    Use standard polite reply for negative comments:
+                                    <span class="block ml-4 italic mt-0.5 text-2xs">"We're sorry to hear you feel that way. Our goal has always been to serve our audience with integrity. We'd love to hear what you enjoy watching on your next visit. 💛"</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-2 bg-gradient-to-r from-ebs-orange-light/10 to-ebs-orange-dark/10 rounded border border-ebs-orange/30">
+                    <h3 class="text-xs font-semibold mb-1 flex items-center">
+                        <i class="fas fa-trophy mr-1 text-ebs-orange-dark"></i>
+                        Overall Success Metrics
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-1 text-2xs">
+                        <div class="bg-white dark:bg-gray-800 bg-opacity-50 p-1 rounded">
+                            <p class="font-bold">Sentiment Shift</p>
+                            <p>+40% positive mentions</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 bg-opacity-50 p-1 rounded">
+                            <p class="font-bold">Engagement Rate</p>
+                            <p>+25% vs. defensive posts</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 bg-opacity-50 p-1 rounded">
+                            <p class="font-bold">Follower Growth</p>
+                            <p>+15% during campaign</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 bg-opacity-50 p-1 rounded">
+                            <p class="font-bold">UGC Quality</p>
+                            <p>500+ quality story submissions</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Print Preview Modal -->
+    <div id="printModal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-3">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl h-5/6 flex flex-col">
+            <div class="flex items-center justify-between p-2 border-b">
+                <h3 class="text-xs font-bold flex items-center">
+                    <i class="fas fa-print text-ebs-orange mr-1"></i>
+                    <span id="printTitle" class="gradient-text">Scene Preview</span>
+                </h3>
+                <div class="flex items-center space-x-1">
+                    <button id="zoomOut" class="text-gray-500 hover:text-ebs-orange p-0.5">
+                        <i class="fas fa-search-minus text-xs"></i>
+                    </button>
+                    <button id="zoomIn" class="text-gray-500 hover:text-ebs-orange p-0.5">
+                        <i class="fas fa-search-plus text-xs"></i>
+                    </button>
+                    <button id="closePrint" class="text-gray-500 hover:text-ebs-orange p-0.5">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto p-3">
+                <div id="printContent" class="print-preview mx-auto bg-white dark:bg-gray-900 p-4 rounded border border-gray-300 dark:border-gray-700 shadow-lg">
+                    <!-- Content will be inserted here -->
+                </div>
+            </div>
+            <div class="p-2 border-t text-center text-2xs text-gray-500">
+                <p>EBS Brand Defense Strategy • Confidential • For internal use only</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const icon = document.querySelector('#themeToggle i');
+            if (document.documentElement.classList.contains('dark')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+
+        // Sidebar Navigation
+        const sidebarBtns = document.querySelectorAll('.sidebar-btn');
+        const phaseContents = document.querySelectorAll('.phase-content');
+        
+        sidebarBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetPhase = btn.getAttribute('data-phase');
+                
+                // Update active button
+                sidebarBtns.forEach(b => {
+                    b.classList.remove('active');
+                    b.querySelector('i').classList.remove('text-ebs-orange');
+                });
+                btn.classList.add('active');
+                btn.querySelector('i').classList.add('text-ebs-orange');
+                
+                // Show target content
+                phaseContents.forEach(content => {
+                    content.classList.add('hidden');
+                    content.classList.remove('active');
+                });
+                
+                document.getElementById(targetPhase).classList.remove('hidden');
+                document.getElementById(targetPhase).classList.add('active');
+                
+                // Scroll to top
+                document.querySelector('main').scrollTop = 0;
+            });
+        });
+
+        // Print/Preview Functionality
+        let currentScale = 0.9;
+        const printModal = document.getElementById('printModal');
+        const printContent = document.getElementById('printContent');
+        const printTitle = document.getElementById('printTitle');
+        
+        // Scene data for printing
+        const sceneData = {
+            scene1: {
+                title: "Scene 1: The Direct Address (0-10s)",
+                content: `
+                    <div class="mb-3">
+                        <h2 class="text-lg font-bold gradient-text mb-1">SCENE 1: THE DIRECT ADDRESS</h2>
+                        <div class="flex items-center space-x-1 mb-2">
+                            <span class="gradient-bg text-white px-2 py-0.5 rounded text-xs">0-10 SECONDS</span>
+                            <span class="text-xs text-gray-500">Opening Hook</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div class="p-2 border rounded">
+                            <h3 class="font-bold text-sm mb-1">VISUAL</h3>
+                            <p class="text-xs">• Trusted EBS host speaking directly to camera<br>
+                            • Casual professional setting (studio lounge)<br>
+                            • Orange gradient backdrop<br>
+                            • Apparel: Neutral colors to contrast with background</p>
+                        </div>
+                        <div class="p-2 border rounded">
+                            <h3 class="font-bold text-sm mb-1">AUDIO</h3>
+                            <p class="text-xs italic">"Lately, we've seen many voices speaking about EBS. Today, we want to speak directly to you—our audience. The true story of EBS isn't told by us; it's written by every Ethiopian who laughs, learns, and finds hope with us."</p>
+                            <p class="text-xs mt-1"><strong>Tone:</strong> Calm, confident, inclusive</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-2 bg-gray-100 dark:bg-gray-800 rounded">
+                        <h3 class="font-bold text-sm mb-1">KEY OBJECTIVES</h3>
+                        <ul class="text-xs space-y-0.5">
+                            <li class="flex items-start"><i class="fas fa-check text-ebs-orange-dark mr-1 mt-0.5"></i> Immediate acknowledgment of online conversations</li>
+                            <li class="flex items-start"><i class="fas fa-check text-ebs-orange-dark mr-1 mt-0.5"></i> Position EBS above the fray ("instead of adding to the noise")</li>
+                            <li class="flex items-start"><i class="fas fa-check text-ebs-orange-dark mr-1 mt-0.5"></i> Establish mission-driven, positive tone from the start</li>
+                            <li class="flex items-start"><i class="fas fa-check text-ebs-orange-dark mr-1 mt-0.5"></i> Redirect narrative from "about EBS" to "with our audience"</li>
+                        </ul>
+                    </div>
+                `
+            },
+            scene2: {
+                title: "Scene 2: Proof Montage (10-65s)",
+                content: `
+                    <div class="mb-3">
+                        <h2 class="text-lg font-bold gradient-text mb-1">SCENE 2: PROOF MONTAGE</h2>
+                        <div class="flex items-center space-x-1 mb-2">
+                            <span class="gradient-bg text-white px-2 py-0.5 rounded text-xs">10-65 SECONDS</span>
+                            <span class="text-xs text-gray-500">Emotional Proof / Show Don't Tell</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h3 class="font-bold text-sm mb-1">STRUCTURE & TIMING</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="p-2 border-l-2 border-ebs-orange-light">
+                                <h4 class="font-bold text-xs mb-1">A. JOY REEL (15s)</h4>
+                                <p class="text-xs">Fast cuts (0.5s each) of iconic entertainment moments</p>
+                                <p class="text-xs mt-1"><strong>Text:</strong> "15 Years of Shared Laughter" in Orange</p>
+                                <p class="text-xs"><strong>Audio:</strong> Upbeat EBS theme song snippet</p>
+                            </div>
+                            <div class="p-2 border-l-2 border-ebs-orange">
+                                <h4 class="font-bold text-xs mb-1">B. IMPACT REEL (20s)</h4>
+                                <p class="text-xs">Humanitarian footage, slightly longer shots (1-1.5s)</p>
+                                <p class="text-xs mt-1"><strong>Text:</strong> "A Voice Where It's Needed Most" in Orange</p>
+                                <p class="text-xs"><strong>Audio:</strong> Subtle Ethiopian instrumental</p>
+                            </div>
+                            <div class="p-2 border-l-2 border-ebs-orange-dark">
+                                <h4 class="font-bold text-xs mb-1">C. PEOPLE REEL (15s)</h4>
+                                <p class="text-xs">User-generated content & audience shots</p>
+                                <p class="text-xs mt-1"><strong>Text:</strong> "Your Stories. Your Platform." with White on Orange</p>
+                                <p class="text-xs"><strong>Audio:</strong> Mixed crowd cheers & testimonials</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-2 bg-gray-100 dark:bg-gray-800 rounded">
+                        <h3 class="font-bold text-sm mb-1">EDITING NOTES</h3>
+                        <ul class="text-xs space-y-0.5">
+                            <li class="flex items-start"><i class="fas fa-video text-ebs-orange mr-1 mt-0.5"></i> Text overlays appear for exactly 2 seconds each</li>
+                            <li class="flex items-start"><i class="fas fa-music text-ebs-orange mr-1 mt-0.5"></i> Audio builds in intensity throughout the montage</li>
+                            <li class="flex items-start"><i class="fas fa-palette text-ebs-orange mr-1 mt-0.5"></i> Color treatment matches EBS brand gradient</li>
+                            <li class="flex items-start"><i class="fas fa-clock text-ebs-orange mr-1 mt-0.5"></i> Total clip count: 35-45 rapid cuts</li>
+                        </ul>
+                    </div>
+                `
+            }
+        };
+
+        // Print button handlers
+        document.querySelectorAll('.print-scene-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const scene = e.currentTarget.getAttribute('data-scene');
+                if (sceneData[scene]) {
+                    printTitle.textContent = sceneData[scene].title;
+                    printContent.innerHTML = sceneData[scene].content;
+                    currentScale = 0.9;
+                    printContent.style.transform = `scale(${currentScale})`;
+                    printModal.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Full strategy print
+        document.getElementById('printBtn').addEventListener('click', () => {
+            printTitle.textContent = "EBS Brand Defense Strategy - Complete";
+            printContent.innerHTML = `
+                <div class="max-w-3xl">
+                    <div class="text-center mb-4 border-b pb-3">
+                        <div class="flex items-center justify-center mb-2">
+                            <div class="logo-bubble w-10 h-10 rounded-full flex items-center justify-center mr-2">
+                                <span class="text-ebs-orange-dark font-bold text-lg">EBS</span>
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-bold gradient-text">EBS BRAND DEFENSE STRATEGY</h1>
+                                <p class="text-sm text-gray-600">Countering False Narratives with Confident Reaffirmation</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Social Media Department • Confidential</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h2 class="text-lg font-bold mb-1 gradient-text">EXECUTIVE SUMMARY</h2>
+                        <p class="text-xs mb-2"><strong>Core Principle:</strong> Lead with overwhelming positive affirmation rather than reacting to negativity. Transform passive viewers into active brand defenders by making them proud participants in the EBS story.</p>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div class="p-1.5 border rounded">
+                                <p class="font-bold">Platform</p>
+                                <p>TikTok (primary)</p>
+                            </div>
+                            <div class="p-1.5 border rounded">
+                                <p class="font-bold">Duration</p>
+                                <p>3-Phase, 30-day campaign</p>
+                            </div>
+                            <div class="p-1.5 border rounded">
+                                <p class="font-bold">Tone</p>
+                                <p>Proud but humble, confident but not arrogant</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h2 class="text-lg font-bold mb-1 gradient-text">PHASE 1: FOUNDATION VIDEO</h2>
+                        <p class="text-xs mb-1"><strong>"This Is Our Story" (90-second hero video)</strong></p>
+                        <div class="text-xs space-y-1 mb-2">
+                            <p><strong>Scene 1 (0-10s):</strong> Direct address - Acknowledge conversations, redirect to mission</p>
+                            <p><strong>Scene 2 (10-65s):</strong> Proof montage - Joy, Impact, People reels with orange gradient text</p>
+                            <p><strong>Scene 3 (65-75s):</strong> Humble bridge - "We're not perfect, we're passionate" pivot</p>
+                            <p><strong>Scene 4 (75-90s):</strong> Call to action - #MyEBSStory mobilization</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h2 class="text-lg font-bold mb-1 gradient-text">PHASE 2: HASHTAG CAMPAIGN</h2>
+                        <p class="text-xs mb-1"><strong>#MyEBSStory - User-Generated Content Flood</strong></p>
+                        <div class="text-xs space-y-0.5 mb-2">
+                            <p>• Seed content from EBS hosts (3-4 personal story videos)</p>
+                            <p>• Incentive: Weekly feature on prime-time broadcast</p>
+                            <p>• Prompt examples: "Earliest EBS memory with family", "Humanitarian segment that moved you"</p>
+                            <p>• Goal: 5,000+ hashtag videos in first week, 10M+ views in 14 days</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h2 class="text-lg font-bold mb-1 gradient-text">PHASE 3: SUSTAINED DEFENSE</h2>
+                        <p class="text-xs mb-1"><strong>Pillar Content Series & Community Management</strong></p>
+                        <div class="text-xs space-y-1">
+                            <p><strong>Content Series:</strong> "Behind the Laughter", "Impact Journey", "Your Voice Here"</p>
+                            <p><strong>Community Protocol:</strong> Do NOT engage arguments. DO like/share positive UGC. Use standard polite reply for negativity.</p>
+                            <p><strong>Success Metrics:</strong> +40% positive mentions, +25% engagement rate, +15% follower growth, 500+ quality UGC submissions</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-2 border-t text-xs text-gray-500">
+                        <p>Document generated: ${new Date().toLocaleDateString()}</p>
+                        <p>For internal EBS Social Media Team use only</p>
+                    </div>
+                </div>
+            `;
+            currentScale = 0.9;
+            printContent.style.transform = `scale(${currentScale})`;
+            printModal.classList.remove('hidden');
+        });
+
+        // Zoom controls
+        document.getElementById('zoomIn').addEventListener('click', () => {
+            currentScale = Math.min(currentScale + 0.1, 1.5);
+            printContent.style.transform = `scale(${currentScale})`;
+        });
+
+        document.getElementById('zoomOut').addEventListener('click', () => {
+            currentScale = Math.max(currentScale - 0.1, 0.5);
+            printContent.style.transform = `scale(${currentScale})`;
+        });
+
+        // Close modal
+        document.getElementById('closePrint').addEventListener('click', () => {
+            printModal.classList.add('hidden');
+        });
+
+        // Close modal on background click
+        printModal.addEventListener('click', (e) => {
+            if (e.target === printModal) {
+                printModal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

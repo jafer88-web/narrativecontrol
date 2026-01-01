@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON to SQLite Converter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .upload-area { border: 3px dashed var(--primary); transition: all 0.3s; cursor: pointer; }
+        .upload-area:hover { background: rgba(67, 97, 238, 0.1); transform: scale(1.02); }
+        .progress { height: 25px; border-radius: 12px; overflow: hidden; }
+        .progress-bar { transition: width 0.6s ease; }
+        .stats-card { background: rgba(255, 255, 255, 0.05); }
+        .data-row { border-left: 4px solid var(--primary); transition: all 0.2s; }
+        .data-row:hover { background: rgba(67, 97, 238, 0.05); transform: translateX(5px); }
+        .download-btn { background: linear-gradient(45deg, var(--primary), var(--success)); border: none; transition: all 0.3s; }
+        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Header -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="text-white fw-bold mb-3">📊 JSON to SQLite Converter</h1>
+                <p class="text-light">Upload your JSON file, clean data in background, and generate a relational SQLite database</p>
+            </div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="glass-card p-4 p-md-5 shadow-lg">
+                    <!-- Upload Area -->
+                    <div id="uploadSection" class="text-center py-5 mb-4 upload-area rounded-4" onclick="document.getElementById('jsonFile').click()">
+                        <div class="mb-3">
+                            <i class="bi bi-cloud-upload-fill fs-1 text-primary" style="font-size: 4rem!important;"></i>
+                        </div>
+                        <h4 class="text-white mb-2">Drop your JSON file here</h4>
+                        <p class="text-light mb-3">or click to browse (max 100MB)</p>
+                        <button class="btn btn-outline-light px-4">Select File</button>
+                        <input type="file" id="jsonFile" accept=".json" class="d-none" onchange="handleFileSelect(event)">
+                    </div>
+
+                    <!-- Progress Section -->
+                    <div id="progressSection" class="d-none">
+                        <h5 class="text-white mb-3">Processing Data <span id="statusText" class="badge bg-warning pulse ms-2">Initializing...</span></h5>
+                        
+                        <!-- Main Progress Bar -->
+                        <div class="progress mb-3 bg-dark">
+                            <div id="mainProgress" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        
+                        <!-- Stage Progress -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3">
+                                <div class="stats-card p-3 rounded-3">
+                                    <small class="text-light d-block">Users</small>
+                                    <div id="userProgress" class="progress mt-2">
+                                        <div class="progress-bar bg-info" style="width: 0%"></div>
+                                    </div>
+                                    <div class="text-white mt-2">
+                                        <span id="userCount">0</span>/<span id="totalUsers">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card p-3 rounded-3">
+                                    <small class="text-light d-block">Relationships</small>
+                                    <div id="relProgress" class="progress mt-2">
+                                        <div class="progress-bar bg-primary" style="width: 0%"></div>
+                                    </div>
+                                    <div class="text-white mt-2">
+                                        <span id="relCount">0</span>/<span id="totalRels">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card p-3 rounded-3">
+                                    <small class="text-light d-block">Friendships</small>
+                                    <div id="friendProgress" class="progress mt-2">
+                                        <div class="progress-bar bg-warning" style="width: 0%"></div>
+                                    </div>
+                                    <div class="text-white mt-2">
+                                        <span id="friendCount">0</span>/<span id="totalFriends">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card p-3 rounded-3">
+                                    <small class="text-light d-block">Database</small>
+                                    <div id="dbProgress" class="progress mt-2">
+                                        <div class="progress-bar bg-success" style="width: 0%"></div>
+                                    </div>
+                                    <div class="text-white mt-2">
+                                        <span id="dbStatus">Pending</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Log -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-white mb-0">Live Processing Log</h6>
+                                <small class="text-light">Cleaning data in background worker...</small>
+                            </div>
+                            <div id="logContainer" class="bg-dark rounded-3 p-3" style="height: 200px; overflow-y: auto;">
+                                <div id="logContent" class="text-light small"></div>
+                            </div>
+                        </div>
+
+                        <!-- Results Section -->
+                        <div id="resultsSection" class="d-none">
+                            <div class="alert alert-success d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+                                <div>
+                                    <h5 class="alert-heading mb-1">Database Created Successfully!</h5>
+                                    <p class="mb-0">Your SQLite database is ready for download.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Database Stats -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="stats-card p-3 rounded-3 h-100">
+                                        <h6 class="text-white mb-3">📈 Database Statistics</h6>
+                                        <div id="statsContent" class="text-light">
+                                            <!-- Stats will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="stats-card p-3 rounded-3 h-100">
+                                        <h6 class="text-white mb-3">📋 Sample Data</h6>
+                                        <div id="sampleContent" class="text-light small">
+                                            <!-- Sample data will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Download Button -->
+                            <div class="text-center">
+                                <button id="downloadBtn" class="btn download-btn text-white px-5 py-3 rounded-pill fs-5">
+                                    <i class="bi bi-download me-2"></i>Download SQLite Database
+                                </button>
+                                <p class="text-light mt-2">File size: <span id="fileSize">0</span> MB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <p class="text-light">Data is processed locally in your browser using Web Workers. No data is sent to any server.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- SQL.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    
+    <script>
+        let db = null;
+        let worker = null;
+        let jsonData = null;
+
+        // Handle file selection
+        async function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Show progress section
+            document.getElementById('uploadSection').classList.add('d-none');
+            document.getElementById('progressSection').classList.remove('d-none');
+            
+            try {
+                // Read file
+                addLog('📂 Reading JSON file...');
+                const text = await file.text();
+                jsonData = JSON.parse(text);
+                
+                // Start processing
+                startProcessing();
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'danger');
+            }
+        }
+
+        // Start processing with Web Worker
+        async function startProcessing() {
+            addLog('🔧 Initializing Web Worker...');
+            
+            // Create Web Worker
+            const workerCode = `
+                self.onmessage = function(e) {
+                    const { data, action } = e.data;
+                    
+                    if (action === 'process') {
+                        processData(data);
+                    }
+                };
+
+                function processData(jsonData) {
+                    const stats = {
+                        totalUsers: 0,
+                        processedUsers: 0,
+                        totalRelationships: 0,
+                        processedRelationships: 0,
+                        totalFriendships: 0,
+                        processedFriendships: 0,
+                        cleanedData: {},
+                        warnings: []
+                    };
+
+                    // Phase 1: Clean and count
+                    stats.totalUsers = Object.keys(jsonData).length;
+                    
+                    for (const [username, userData] of Object.entries(jsonData)) {
+                        stats.processedUsers++;
+                        
+                        // Clean user data
+                        const cleanUser = cleanUserData(userData.profile, username);
+                        stats.cleanedData[username] = { profile: cleanUser, relationships: {} };
+                        
+                        // Count relationships
+                        if (userData.friendship) {
+                            const following = userData.friendship.following || [];
+                            const blocked = userData.friendship.blocked || [];
+                            const friends = userData.friendship.friend || [];
+                            
+                            stats.totalRelationships += following.length + blocked.length;
+                            stats.totalFriendships += friends.length;
+                        }
+                        
+                        // Send progress update every 10 users
+                        if (stats.processedUsers % 10 === 0) {
+                            self.postMessage({
+                                type: 'progress',
+                                stage: 'users',
+                                data: stats
+                            });
+                        }
+                    }
+
+                    // Phase 2: Process relationships
+                    for (const [username, userData] of Object.entries(jsonData)) {
+                        if (userData.friendship) {
+                            const cleanRels = cleanRelationships(userData.friendship);
+                            stats.cleanedData[username].relationships = cleanRels;
+                            stats.processedRelationships += Object.keys(cleanRels.following || {}).length +
+                                                           Object.keys(cleanRels.blocked || {}).length;
+                            stats.processedFriendships += Object.keys(cleanRels.friend || {}).length;
+                            
+                            // Send progress update
+                            self.postMessage({
+                                type: 'progress',
+                                stage: 'relationships',
+                                data: stats
+                            });
+                        }
+                    }
+
+                    // Send final result
+                    self.postMessage({
+                        type: 'complete',
+                        data: stats.cleanedData,
+                        warnings: stats.warnings
+                    });
+                }
+
+                function cleanUserData(profile, username) {
+                    const clean = { ...profile };
+                    
+                    // Ensure username is consistent
+                    clean.userName = username;
+                    
+                    // Clean likes (remove commas, convert to number)
+                    if (clean.likesReceived) {
+                        clean.likesReceived = parseInt(clean.likesReceived.toString().replace(/,/g, '')) || 0;
+                    }
+                    
+                    // Clean counts
+                    clean.followerCount = parseInt(clean.followerCount) || 0;
+                    clean.followingCount = parseInt(clean.followingCount) || 0;
+                    clean.friendCount = parseInt(clean.friendCount) || 0;
+                    
+                    return clean;
+                }
+
+                function cleanRelationships(friendship) {
+                    const clean = {
+                        following: {},
+                        blocked: {},
+                        friend: {}
+                    };
+                    
+                    // Clean following relationships (remove N/A)
+                    if (friendship.following) {
+                        friendship.following.forEach(rel => {
+                            if (rel.UserName && rel.UserName !== 'N/A') {
+                                clean.following[rel.UserName] = {
+                                    date: cleanDate(rel.Date),
+                                    originalDate: rel.Date
+                                };
+                            }
+                        });
+                    }
+                    
+                    // Clean blocked relationships
+                    if (friendship.blocked) {
+                        friendship.blocked.forEach(rel => {
+                            if (rel.UserName && rel.UserName !== 'N/A') {
+                                clean.blocked[rel.UserName] = {
+                                    date: cleanDate(rel.Date),
+                                    originalDate: rel.Date
+                                };
+                            }
+                        });
+                    }
+                    
+                    // Clean friend relationships
+                    if (friendship.friend) {
+                        friendship.friend.forEach(rel => {
+                            if (rel.UserName && rel.UserName !== 'N/A') {
+                                clean.friend[rel.UserName] = {
+                                    followingDate: cleanDate(rel.followingDate),
+                                    followerDate: cleanDate(rel.followerDate),
+                                    originalFollowingDate: rel.followingDate,
+                                    originalFollowerDate: rel.followerDate
+                                };
+                            }
+                        });
+                    }
+                    
+                    return clean;
+                }
+
+                function cleanDate(dateStr) {
+                    if (!dateStr || dateStr === 'N/A') return null;
+                    
+                    try {
+                        // Convert various date formats to ISO
+                        const date = new Date(dateStr);
+                        return date.toISOString();
+                    } catch {
+                        return null;
+                    }
+                }
+            `;
+
+            // Create worker from blob
+            const blob = new Blob([workerCode], { type: 'application/javascript' });
+            worker = new Worker(URL.createObjectURL(blob));
+            
+            // Handle worker messages
+            worker.onmessage = function(e) {
+                const { type, stage, data, warnings } = e.data;
+                
+                switch (type) {
+                    case 'progress':
+                        updateProgress(stage, data);
+                        break;
+                        
+                    case 'complete':
+                        addLog('✅ Data cleaning complete!');
+                        createDatabase(data);
+                        break;
+                }
+            };
+            
+            // Start worker
+            addLog('🧹 Cleaning data in background...');
+            worker.postMessage({
+                action: 'process',
+                data: jsonData
+            });
+        }
+
+        // Update progress display
+        function updateProgress(stage, stats) {
+            // Update main progress
+            const totalItems = stats.totalUsers + stats.totalRelationships + stats.totalFriendships;
+            const processedItems = stats.processedUsers + stats.processedRelationships + stats.processedFriendships;
+            const mainPercent = totalItems > 0 ? (processedItems / totalItems) * 100 : 0;
+            
+            document.getElementById('mainProgress').style.width = `${mainPercent}%`;
+            document.getElementById('statusText').textContent = `${stage.charAt(0).toUpperCase() + stage.slice(1)}...`;
+            
+            // Update individual progress bars
+            document.getElementById('userProgress').style.width = `${(stats.processedUsers / stats.totalUsers) * 100}%`;
+            document.getElementById('relProgress').style.width = `${(stats.processedRelationships / stats.totalRelationships) * 100}%`;
+            document.getElementById('friendProgress').style.width = `${(stats.processedFriendships / stats.totalFriendships) * 100}%`;
+            
+            // Update counts
+            document.getElementById('userCount').textContent = stats.processedUsers;
+            document.getElementById('totalUsers').textContent = stats.totalUsers;
+            document.getElementById('relCount').textContent = stats.processedRelationships;
+            document.getElementById('totalRels').textContent = stats.totalRelationships;
+            document.getElementById('friendCount').textContent = stats.processedFriendships;
+            document.getElementById('totalFriends').textContent = stats.totalFriendships;
+            
+            // Add log entry
+            addLog(`Processed ${stats.processedUsers} users, ${stats.processedRelationships} relationships...`);
+        }
+
+        // Create SQLite database
+        async function createDatabase(cleanedData) {
+            addLog('🗄️ Creating SQLite database...');
+            document.getElementById('dbStatus').textContent = 'Building';
+            document.getElementById('dbProgress').style.width = '50%';
+            
+            try {
+                // Initialize SQL.js
+                const SQL = await initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                });
+                
+                // Create new database
+                db = new SQL.Database();
+                
+                // Create tables
+                const sql = `
+                    -- Users table
+                    CREATE TABLE IF NOT EXISTS users (
+                        user_id TEXT PRIMARY KEY,
+                        email TEXT NOT NULL,
+                        display_name TEXT NOT NULL,
+                        birth_date TEXT,
+                        follower_count INTEGER DEFAULT 0,
+                        following_count INTEGER DEFAULT 0,
+                        likes_received INTEGER DEFAULT 0,
+                        friend_count INTEGER DEFAULT 0,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                    
+                    -- Following relationships
+                    CREATE TABLE IF NOT EXISTS following (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        follower_id TEXT NOT NULL,
+                        followed_id TEXT NOT NULL,
+                        follow_date TIMESTAMP,
+                        FOREIGN KEY (follower_id) REFERENCES users(user_id),
+                        FOREIGN KEY (followed_id) REFERENCES users(user_id),
+                        UNIQUE(follower_id, followed_id)
+                    );
+                    
+                    -- Blocked relationships
+                    CREATE TABLE IF NOT EXISTS blocked (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        blocker_id TEXT NOT NULL,
+                        blocked_id TEXT NOT NULL,
+                        block_date TIMESTAMP,
+                        FOREIGN KEY (blocker_id) REFERENCES users(user_id),
+                        FOREIGN KEY (blocked_id) REFERENCES users(user_id),
+                        UNIQUE(blocker_id, blocked_id)
+                    );
+                    
+                    -- Friends (mutual relationships)
+                    CREATE TABLE IF NOT EXISTS friends (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user1_id TEXT NOT NULL,
+                        user2_id TEXT NOT NULL,
+                        user1_following_date TIMESTAMP,
+                        user2_following_date TIMESTAMP,
+                        FOREIGN KEY (user1_id) REFERENCES users(user_id),
+                        FOREIGN KEY (user2_id) REFERENCES users(user_id),
+                        CHECK (user1_id < user2_id),
+                        UNIQUE(user1_id, user2_id)
+                    );
+                `;
+                
+                db.exec(sql);
+                addLog('✅ Database schema created');
+                
+                // Insert data
+                await insertData(cleanedData);
+                
+            } catch (error) {
+                addLog(`❌ Database error: ${error.message}`, 'danger');
+            }
+        }
+
+        // Insert cleaned data into database
+        async function insertData(cleanedData) {
+            addLog('📝 Inserting data into database...');
+            
+            // Prepare statements for better performance
+            const userStmt = db.prepare(`
+                INSERT INTO users (user_id, email, display_name, birth_date, follower_count, following_count, likes_received, friend_count)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `);
+            
+            const followingStmt = db.prepare(`
+                INSERT OR IGNORE INTO following (follower_id, followed_id, follow_date)
+                VALUES (?, ?, ?)
+            `);
+            
+            const blockedStmt = db.prepare(`
+                INSERT OR IGNORE INTO blocked (blocker_id, blocked_id, block_date)
+                VALUES (?, ?, ?)
+            `);
+            
+            const friendStmt = db.prepare(`
+                INSERT OR IGNORE INTO friends (user1_id, user2_id, user1_following_date, user2_following_date)
+                VALUES (?, ?, ?, ?)
+            `);
+            
+            let insertedUsers = 0;
+            let insertedRelationships = 0;
+            
+            // Start transaction for better performance
+            db.exec("BEGIN TRANSACTION");
+            
+            try {
+                // Insert users
+                for (const [username, userData] of Object.entries(cleanedData)) {
+                    const profile = userData.profile;
+                    
+                    userStmt.run([
+                        username,
+                        profile.emailAddress || '',
+                        profile.displayName || username,
+                        profile.birthDate || null,
+                        profile.followerCount || 0,
+                        profile.followingCount || 0,
+                        profile.likesReceived || 0,
+                        profile.friendCount || 0
+                    ]);
+                    
+                    insertedUsers++;
+                    
+                    // Insert relationships if they exist
+                    if (userData.relationships) {
+                        const rels = userData.relationships;
+                        
+                        // Following relationships
+                        if (rels.following) {
+                            for (const [followedUser, relData] of Object.entries(rels.following)) {
+                                followingStmt.run([username, followedUser, relData.date]);
+                                insertedRelationships++;
+                            }
+                        }
+                        
+                        // Blocked relationships
+                        if (rels.blocked) {
+                            for (const [blockedUser, relData] of Object.entries(rels.blocked)) {
+                                blockedStmt.run([username, blockedUser, relData.date]);
+                                insertedRelationships++;
+                            }
+                        }
+                        
+                        // Friend relationships (mutual)
+                        if (rels.friend) {
+                            for (const [friendUser, relData] of Object.entries(rels.friend)) {
+                                // Ensure consistent ordering (user1 < user2)
+                                const user1 = username < friendUser ? username : friendUser;
+                                const user2 = username < friendUser ? friendUser : username;
+                                
+                                // Determine which following date belongs to which user
+                                const user1Date = username === user1 ? relData.followingDate : relData.followerDate;
+                                const user2Date = username === user2 ? relData.followingDate : relData.followerDate;
+                                
+                                friendStmt.run([user1, user2, user1Date, user2Date]);
+                            }
+                        }
+                    }
+                    
+                    // Update progress every 50 users
+                    if (insertedUsers % 50 === 0) {
+                        document.getElementById('dbProgress').style.width = 
+                            `${Math.min(90, 50 + (insertedUsers / Object.keys(cleanedData).length) * 40)}%`;
+                        addLog(`Inserted ${insertedUsers} users...`);
+                    }
+                }
+                
+                // Commit transaction
+                db.exec("COMMIT");
+                
+                // Finalize statements
+                userStmt.free();
+                followingStmt.free();
+                blockedStmt.free();
+                friendStmt.free();
+                
+                // Complete progress
+                document.getElementById('dbProgress').style.width = '100%';
+                document.getElementById('dbStatus').textContent = 'Complete';
+                addLog(`✅ Database created successfully! Inserted ${insertedUsers} users and ${insertedRelationships} relationships.`);
+                
+                // Show results
+                showResults(insertedUsers, insertedRelationships);
+                
+            } catch (error) {
+                db.exec("ROLLBACK");
+                addLog(`❌ Insert error: ${error.message}`, 'danger');
+            }
+        }
+
+        // Show results and download button
+        function showResults(userCount, relationshipCount) {
+            // Calculate file size (approx)
+            const fileSize = db.export().byteLength / (1024 * 1024);
+            
+            // Update stats
+            document.getElementById('statsContent').innerHTML = `
+                <div class="data-row p-2 mb-2">
+                    <i class="bi bi-person me-2"></i>
+                    <strong>Users:</strong> <span class="float-end">${userCount}</span>
+                </div>
+                <div class="data-row p-2 mb-2">
+                    <i class="bi bi-arrow-right-circle me-2"></i>
+                    <strong>Following Relationships:</strong> <span class="float-end">${relationshipCount}</span>
+                </div>
+                <div class="data-row p-2 mb-2">
+                    <i class="bi bi-database me-2"></i>
+                    <strong>Database Size:</strong> <span class="float-end">${fileSize.toFixed(2)} MB</span>
+                </div>
+                <div class="data-row p-2 mb-2">
+                    <i class="bi bi-table me-2"></i>
+                    <strong>Tables Created:</strong> <span class="float-end">4</span>
+                </div>
+            `;
+            
+            // Show sample data
+            const sample = db.exec("SELECT user_id, display_name, follower_count FROM users LIMIT 5");
+            if (sample.length > 0) {
+                let html = '<table class="table table-sm table-dark">';
+                html += '<tr><th>ID</th><th>Name</th><th>Followers</th></tr>';
+                
+                sample[0].values.forEach(row => {
+                    html += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>`;
+                });
+                
+                html += '</table>';
+                document.getElementById('sampleContent').innerHTML = html;
+            }
+            
+            // Update file size
+            document.getElementById('fileSize').textContent = fileSize.toFixed(2);
+            
+            // Show results section
+            document.getElementById('resultsSection').classList.remove('d-none');
+            
+            // Add log entry
+            addLog('✨ Ready to download database!');
+        }
+
+        // Download database
+        function downloadDatabase() {
+            if (!db) return;
+            
+            try {
+                const data = db.export();
+                const blob = new Blob([data], { type: 'application/x-sqlite3' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'social_network.db';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                addLog('💾 Database downloaded successfully!');
+            } catch (error) {
+                addLog(`❌ Download error: ${error.message}`, 'danger');
+            }
+        }
+
+        // Add log message
+        function addLog(message, type = 'info') {
+            const logContent = document.getElementById('logContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'danger' ? 'text-danger' : type === 'warning' ? 'text-warning' : 'text-light';
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = `mb-1 ${color}`;
+            logEntry.innerHTML = `<small>[${timestamp}]</small> ${message}`;
+            
+            logContent.appendChild(logEntry);
+            
+            // Auto-scroll to bottom
+            const container = document.getElementById('logContainer');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up download button
+            document.getElementById('downloadBtn').addEventListener('click', downloadDatabase);
+            
+            // Add drag and drop support
+            const uploadArea = document.getElementById('uploadSection');
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.background = 'rgba(67, 97, 238, 0.2)';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.background = '';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.background = '';
+                
+                const file = e.dataTransfer.files[0];
+                if (file && file.type === 'application/json') {
+                    const input = document.getElementById('jsonFile');
+                    input.files = e.dataTransfer.files;
+                    handleFileSelect({ target: input });
+                } else {
+                    addLog('❌ Please drop a JSON file only', 'danger');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
